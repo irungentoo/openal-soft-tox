@@ -1357,6 +1357,9 @@ ALvoid aluMixData(ALCdevice *device, ALvoid *buffer, ALsizei size)
 #undef WRITE
         }
 
+        int16_t loopback_out_array[SamplesToDo];
+        Write_ALshort(OutBuffer, loopback_out_array, SamplesToDo, 1);
+        WriteRingBuffer(device->loopback_ring, loopback_out_array, sizeof(loopback_out_array));
         size -= SamplesToDo;
         IncrementRef(&device->MixCount);
     }

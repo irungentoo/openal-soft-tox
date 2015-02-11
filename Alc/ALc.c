@@ -2221,6 +2221,8 @@ static ALCvoid FreeDevice(ALCdevice *device)
     al_free(device->DryBuffer);
     device->DryBuffer = NULL;
 
+    DestroyRingBuffer(device->loopback_ring);
+
     al_free(device);
 }
 
@@ -2829,6 +2831,10 @@ static ALCsizei GetIntegerv(ALCdevice *device, ALCenum param, ALCsizei size, ALC
             values[0] = (device->Hrtf ? ALC_TRUE : ALC_FALSE);
             return 1;
 
+        case ALC_LOOPBACK_CAPTURE_SAMPLES:
+            values[0] = (RingBufferSize(device->loopback_ring) / 2);
+            return 1;
+
         default:
             alcSetError(device, ALC_INVALID_ENUM);
             return 0;
@@ -3300,6 +3306,8 @@ ALC_API ALCdevice* ALC_APIENTRY alcOpenDevice(const ALCchar *deviceName)
     device->NumUpdates = 4;
     device->UpdateSize = 1024;
 
+    device->loopback_ring = CreateRingBuffer(1, BUFFERSIZE * 4);
+
     if(!PlaybackBackend.getFactory)
         device->Backend = create_backend_wrapper(device, &PlaybackBackend.Funcs,
                                                  ALCbackend_Playback);
@@ -3687,6 +3695,18 @@ ALC_API void ALC_APIENTRY alcCaptureSamples(ALCdevice *device, ALCvoid *buffer, 
     if(device) ALCdevice_DecRef(device);
 }
 
+ALC_API void ALC_APIENTRY alcCaptureSamplesLoopback(ALCdevice *device, ALCvoid *buffer, ALCsizei samples)
+{
+    if(!(device=VerifyDevice(device)) || device->Type != Playback)
+        alcSetError(device, ALC_INVALID_DEVICE);
+    else
+    {
+        if(samples >= 0 && RingBufferSize(device->loopback_ring) >= ((ALCuint)samples * 2)) {
+            ReadRingBuffer(device->loopback_ring, buffer, samples * 2);
+        }
+    }
+    if(device) ALCdevice_DecRef(device);
+}
 
 /************************************************
  * ALC loopback functions

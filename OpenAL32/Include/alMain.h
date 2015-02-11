@@ -620,6 +620,7 @@ typedef struct HrtfParams {
     ALint DelayStep[2];
 } HrtfParams;
 
+typedef struct RingBuffer RingBuffer;
 
 /* Size for temporary storage of buffer data, in ALfloats. Larger values need
  * more memory, while smaller values may need more iterations. The value needs
@@ -724,6 +725,8 @@ struct ALCdevice_struct
     void *ExtraData; // For the backend's use
 
     ALCdevice *volatile next;
+
+    RingBuffer *loopback_ring;
 
     /* Memory space used by the default slot (Playback devices only) */
     alignas(16) ALCbyte _slot_mem[];
@@ -833,7 +836,6 @@ void SetMixerFPUMode(FPUCtl *ctl);
 void RestoreFPUMode(const FPUCtl *ctl);
 
 
-typedef struct RingBuffer RingBuffer;
 RingBuffer *CreateRingBuffer(ALsizei frame_size, ALsizei length);
 void DestroyRingBuffer(RingBuffer *ring);
 ALsizei RingBufferSize(RingBuffer *ring);

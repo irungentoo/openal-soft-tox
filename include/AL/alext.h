@@ -409,6 +409,9 @@ ALC_API void ALC_APIENTRY alcDeviceResumeSOFT(ALCdevice *device);
 #define AL_FORMAT_BFORMAT3D_MULAW                0x10032
 #endif
 
+#define ALC_LOOPBACK_CAPTURE_SAMPLES 0x1004
+ALC_API void ALC_APIENTRY alcCaptureSamplesLoopback(ALCdevice *device, ALCvoid *buffer, ALCsizei samples);
+
 #ifdef __cplusplus
 }
 #endif
