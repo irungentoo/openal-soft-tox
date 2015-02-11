@@ -1719,7 +1719,7 @@ static void ALCmmdevBackendFactory_deinit(ALCmmdevBackendFactory* UNUSED(self))
 
 static ALCboolean ALCmmdevBackendFactory_querySupport(ALCmmdevBackendFactory* UNUSED(self), ALCbackend_Type type)
 {
-    if(type == ALCbackend_Playback || type == ALCbackend_Capture)
+    if(type == ALCbackend_Playback /*|| type == ALCbackend_Capture*/)
         return ALC_TRUE;
     return ALC_FALSE;
 }
@@ -1765,7 +1765,7 @@ static ALCbackend* ALCmmdevBackendFactory_createBackend(ALCmmdevBackendFactory* 
 
         return STATIC_CAST(ALCbackend, backend);
     }
-    if(type == ALCbackend_Capture)
+   /* if(type == ALCbackend_Capture)
     {
         ALCmmdevCapture *backend;
 
@@ -1776,7 +1776,7 @@ static ALCbackend* ALCmmdevBackendFactory_createBackend(ALCmmdevBackendFactory* 
         ALCmmdevCapture_Construct(backend, device);
 
         return STATIC_CAST(ALCbackend, backend);
-    }
+    }*/
 
     return NULL;
 }
